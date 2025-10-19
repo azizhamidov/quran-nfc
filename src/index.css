@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+
+.font-quran {
+  font-family: 'Amiri', serif;
+}
+
+.glow-text {
+  text-shadow:
+    0 0 5px #c084fc,
+    0 0 10px #c084fc,
+    0 0 15px #a855f7,
+    0 0 20px #9333ea;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(15px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease forwards;
+}
