@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useEffect, useState } from 'react';
-import { verses } from './data';
+import { ayat as verses } from './data';
 
 export default function App() {
   const [verse, setVerse] = useState(null);
