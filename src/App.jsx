@@ -34,7 +34,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-indigo-900 via-purple-900 to-pink-900 text-white px-6 py-12">
       <h1 className="text-4xl md:text-5xl mb-8 glow-text font-extrabold">
-        Quran NFC Verse
+        Today Verse
       </h1>
 
       <div className="max-w-3xl bg-white bg-opacity-10 backdrop-blur-md p-8 rounded-3xl shadow-xl animate-fadeIn">
