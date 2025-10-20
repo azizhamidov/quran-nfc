@@ -4,6 +4,7 @@ export default function App() {
   const [verse, setVerse] = useState(null);
   const [audio, setAudio] = useState(null);
   const [isDark, setIsDark] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Detect device theme
   useEffect(() => {
@@ -14,28 +15,33 @@ export default function App() {
     return () => darkThemeMq.removeEventListener("change", listener);
   }, []);
 
-  // Fetch Quran data from API
+  // Fetch a single random verse
   useEffect(() => {
-    fetch("https://alquran-api.pages.dev/api/quran?lang=en")
-      .then((res) => res.json())
-      .then((data) => {
-        // data contains all surahs; pick a random verse
-        const surahIndex = Math.floor(Math.random() * data.length);
-        const surah = data[surahIndex];
-        const ayahIndex = Math.floor(Math.random() * surah.ayahs.length);
-        const ayah = surah.ayahs[ayahIndex];
+    async function fetchRandomVerse() {
+      try {
+        const surahNumber = Math.floor(Math.random() * 114) + 1; // 1-114
+        const res = await fetch(`https://alquran-api.pages.dev/surah/${surahNumber}?lang=en`);
+        const data = await res.json();
+        const ayahs = data.ayahs;
+        const ayah = ayahs[Math.floor(Math.random() * ayahs.length)];
 
         const verseData = {
-          surah: surah.number,
+          surah: data.number,
           ayah: ayah.numberInSurah,
           arabic: ayah.text,
           translation: ayah.translation,
-          audio: ayah.audio.url, // API has audio URLs
+          audio: ayah.audio.url,
         };
 
         setVerse(verseData);
-      })
-      .catch((err) => console.error("Failed to fetch Quran API:", err));
+      } catch (err) {
+        console.error("Failed to fetch verse:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRandomVerse();
   }, []);
 
   // Handle audio
@@ -48,9 +54,7 @@ export default function App() {
     }
   }, [verse]);
 
-  if (!verse) return <div>Loading...</div>;
-
-  // Colors based on theme
+  // Theme colors
   const bgGradient = isDark
     ? "from-gray-900 via-gray-800 to-gray-700"
     : "from-blue-100 via-purple-50 to-pink-50";
@@ -60,11 +64,27 @@ export default function App() {
   const textColor = isDark ? "text-gray-100" : "text-gray-900";
   const subTextColor = isDark ? "text-gray-300" : "text-gray-500";
 
+  // Loading design
+  if (loading) return (
+    <div className={`min-h-screen flex flex-col items-center justify-center bg-gradient-to-b ${bgGradient}`}>
+      <div className="w-24 h-24 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+      <p className={`mt-6 text-lg ${subTextColor}`}>Fetching a beautiful verse...</p>
+    </div>
+  );
+
   return (
     <div className={`relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b ${bgGradient}`}>
-      {/* Card */}
+      {/* Floating circles */}
+      <div className="absolute top-10 left-10 w-40 h-40 rounded-full opacity-20 bg-purple-400 animate-pulse-slow"></div>
+      <div className="absolute bottom-20 right-20 w-60 h-60 rounded-full opacity-20 bg-pink-400 animate-pulse-slow"></div>
+
+      <h1 className={`text-4xl md:text-5xl mb-12 font-bold tracking-wide animate-fadeInDown ${textColor}`}>
+        Daily Verse
+      </h1>
+
+      {/* Glassmorphic card */}
       <div className={`relative max-w-2xl w-full ${cardBg} rounded-3xl p-12 flex flex-col items-center text-center shadow-2xl animate-floating`}>
-        <p className={`text-4xl md:text-5xl font-quran mb-6 leading-relaxed ${textColor}`}>
+        <p className={`text-4xl md:text-5xl font-quran mb-6 leading-relaxed transition-transform duration-500 transform hover:scale-105 ${textColor}`}>
           {verse.arabic}
         </p>
         <p className={`text-lg italic mb-4 ${subTextColor}`}>{verse.translation}</p>
@@ -77,6 +97,37 @@ export default function App() {
           ▶️ Play Recitation
         </button>
       </div>
+
+      <div className={`absolute bottom-6 text-sm opacity-70 animate-fadeInUp ${subTextColor}`}>
+        Reflect and find peace ✨
+      </div>
+
+      {/* Animations */}
+      <style jsx>{`
+        @keyframes fadeInDown {
+          0% { opacity: 0; transform: translateY(-30px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseSlow {
+          0%, 100% { transform: scale(1); opacity: 0.2; }
+          50% { transform: scale(1.2); opacity: 0.3; }
+        }
+        @keyframes floating {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
+          100% { transform: translateY(0px); }
+        }
+        .animate-fadeInDown { animation: fadeInDown 1s ease-out forwards; }
+        .animate-fadeInUp { animation: fadeInUp 1s ease-out forwards; }
+        .animate-pulse-slow { animation: pulseSlow 8s ease-in-out infinite; }
+        .animate-floating { animation: floating 6s ease-in-out infinite; }
+        .animate-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }
