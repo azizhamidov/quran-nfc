@@ -19,18 +19,21 @@ export default function App() {
   useEffect(() => {
     const fetchVerse = async () => {
       try {
-        const surah = Math.floor(Math.random() * 114) + 1;
+        const surah = Math.floor(Math.random() * 114) + 1; // Surah 1-114
+        // Fetch surah to get number of ayahs
         const surahRes = await fetch(`https://api.alquran.cloud/v1/surah/${surah}`);
         const surahData = await surahRes.json();
         const ayahCount = surahData.data.numberOfAyahs;
 
         const ayahNumber = Math.floor(Math.random() * ayahCount) + 1;
 
+        // Fetch specific ayah with translation and audio
         const ayahRes = await fetch(
           `https://api.alquran.cloud/v1/ayah/${surah}:${ayahNumber}/ar.alafasy`
-        );
+        ); // Arabic + Alafasy recitation
         const ayahData = await ayahRes.json();
 
+        // Fetch translation (English, e.g., Saheeh International)
         const translationRes = await fetch(
           `https://api.alquran.cloud/v1/ayah/${surah}:${ayahNumber}/en.sahih`
         );
@@ -86,19 +89,14 @@ export default function App() {
       <div className="absolute bottom-20 right-20 w-60 h-60 rounded-full opacity-20 bg-pink-400 animate-pulse-slow"></div>
 
       <h1 className={`text-4xl md:text-5xl mb-12 font-bold tracking-wide animate-fadeInDown ${textColor}`}>
-        Daily Verse
+        Today's Peace
       </h1>
 
       {/* Glassmorphic card */}
       <div className={`relative max-w-2xl w-full ${cardBg} rounded-3xl p-12 flex flex-col items-center text-center shadow-2xl animate-floating`}>
-        {/* Arabic verse */}
-        <p
-          className={`text-4xl md:text-5xl font-quran mb-6 leading-relaxed break-words`}
-          style={{ lineHeight: "2rem" }}
-        >
+        <p className={`text-4xl md:text-5xl font-quran mb-6 leading-relaxed transition-transform duration-500 transform hover:scale-105 ${textColor}`}>
           {verse.arabic}
         </p>
-
         <p className={`text-lg italic mb-4 ${subTextColor}`}>{verse.translation}</p>
         <p className={`text-sm mb-6 ${subTextColor}`}>
           Surah {verse.surah}, Ayah {verse.ayah}
