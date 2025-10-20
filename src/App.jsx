@@ -91,15 +91,13 @@ export default function App() {
 
       {/* Glassmorphic card */}
       <div className={`relative max-w-2xl w-full ${cardBg} rounded-3xl p-12 flex flex-col items-center text-center shadow-2xl animate-floating`}>
-        {/* Arabic verse with horizontal scroll if long */}
-        <div className="overflow-x-auto w-full mb-6">
-          <p
-            className={`text-4xl md:text-5xl font-quran leading-relaxed whitespace-nowrap`}
-            style={{ lineHeight: "1.8rem", minWidth: "100%" }}
-          >
-            {verse.arabic}
-          </p>
-        </div>
+        {/* Arabic verse */}
+        <p
+          className={`text-4xl md:text-5xl font-quran mb-6 leading-relaxed break-words`}
+          style={{ lineHeight: "2rem" }}
+        >
+          {verse.arabic}
+        </p>
 
         <p className={`text-lg italic mb-4 ${subTextColor}`}>{verse.translation}</p>
         <p className={`text-sm mb-6 ${subTextColor}`}>
