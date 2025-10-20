@@ -19,21 +19,18 @@ export default function App() {
   useEffect(() => {
     const fetchVerse = async () => {
       try {
-        const surah = Math.floor(Math.random() * 114) + 1; // Surah 1-114
-        // Fetch surah to get number of ayahs
+        const surah = Math.floor(Math.random() * 114) + 1;
         const surahRes = await fetch(`https://api.alquran.cloud/v1/surah/${surah}`);
         const surahData = await surahRes.json();
         const ayahCount = surahData.data.numberOfAyahs;
 
         const ayahNumber = Math.floor(Math.random() * ayahCount) + 1;
 
-        // Fetch specific ayah with translation and audio
         const ayahRes = await fetch(
           `https://api.alquran.cloud/v1/ayah/${surah}:${ayahNumber}/ar.alafasy`
-        ); // Arabic + Alafasy recitation
+        );
         const ayahData = await ayahRes.json();
 
-        // Fetch translation (English, e.g., Saheeh International)
         const translationRes = await fetch(
           `https://api.alquran.cloud/v1/ayah/${surah}:${ayahNumber}/en.sahih`
         );
@@ -94,9 +91,16 @@ export default function App() {
 
       {/* Glassmorphic card */}
       <div className={`relative max-w-2xl w-full ${cardBg} rounded-3xl p-12 flex flex-col items-center text-center shadow-2xl animate-floating`}>
-        <p className={`text-4xl md:text-5xl font-quran mb-6 leading-relaxed transition-transform duration-500 transform hover:scale-105 ${textColor}`}>
-          {verse.arabic}
-        </p>
+        {/* Arabic verse with horizontal scroll if long */}
+        <div className="overflow-x-auto w-full mb-6">
+          <p
+            className={`text-4xl md:text-5xl font-quran leading-relaxed whitespace-nowrap`}
+            style={{ lineHeight: "1.8rem", minWidth: "100%" }}
+          >
+            {verse.arabic}
+          </p>
+        </div>
+
         <p className={`text-lg italic mb-4 ${subTextColor}`}>{verse.translation}</p>
         <p className={`text-sm mb-6 ${subTextColor}`}>
           Surah {verse.surah}, Ayah {verse.ayah}
