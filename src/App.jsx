@@ -50,7 +50,7 @@ export default function App() {
       <div className="absolute bottom-20 right-20 w-60 h-60 rounded-full opacity-20 bg-pink-400 animate-pulse-slow"></div>
 
       <h1 className={`text-4xl md:text-5xl mb-12 font-bold tracking-wide animate-fadeInDown ${textColor}`}>
-        Daily Verse
+        Today's Peace
       </h1>
 
       {/* Glassmorphic card */}
