@@ -15,25 +15,36 @@ export default function App() {
     return () => darkThemeMq.removeEventListener("change", listener);
   }, []);
 
-  // Fetch a single random verse
+  // Fetch a single random verse safely
   useEffect(() => {
     async function fetchRandomVerse() {
       try {
-        const surahNumber = Math.floor(Math.random() * 114) + 1; // 1-114
-        const res = await fetch(`https://alquran-api.pages.dev/surah/${surahNumber}?lang=en`);
-        const data = await res.json();
-        const ayahs = data.ayahs;
-        const ayah = ayahs[Math.floor(Math.random() * ayahs.length)];
+        // pick random surah and ayah safely
+        let validVerse = false;
+        while (!validVerse) {
+          const surahNumber = Math.floor(Math.random() * 114) + 1; // 1-114
+          // Fetch surah
+          const res = await fetch(`https://alquran-api.pages.dev/surah/${surahNumber}?lang=en`);
+          const data = await res.json();
+          if (!data || !data.ayahs || data.ayahs.length === 0) continue;
 
-        const verseData = {
-          surah: data.number,
-          ayah: ayah.numberInSurah,
-          arabic: ayah.text,
-          translation: ayah.translation,
-          audio: ayah.audio.url,
-        };
+          // Pick random ayah from surah
+          const ayah = data.ayahs[Math.floor(Math.random() * data.ayahs.length)];
 
-        setVerse(verseData);
+          // Make sure audio exists
+          if (!ayah.audio || !ayah.audio.url) continue;
+
+          const verseData = {
+            surah: data.number,
+            ayah: ayah.numberInSurah,
+            arabic: ayah.text,
+            translation: ayah.translation,
+            audio: ayah.audio.url,
+          };
+
+          setVerse(verseData);
+          validVerse = true;
+        }
       } catch (err) {
         console.error("Failed to fetch verse:", err);
       } finally {
@@ -64,7 +75,7 @@ export default function App() {
   const textColor = isDark ? "text-gray-100" : "text-gray-900";
   const subTextColor = isDark ? "text-gray-300" : "text-gray-500";
 
-  // Loading design
+  // Loading spinner
   if (loading) return (
     <div className={`min-h-screen flex flex-col items-center justify-center bg-gradient-to-b ${bgGradient}`}>
       <div className="w-24 h-24 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
