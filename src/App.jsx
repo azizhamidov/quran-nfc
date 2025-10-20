@@ -19,28 +19,38 @@ export default function App() {
   useEffect(() => {
     async function fetchRandomVerse() {
       try {
-        const surahNumber = Math.floor(Math.random() * 114) + 1; // 1-114
-        // Fetch surah to know number of ayahs
+        // Random surah 1-114
+        const surahNumber = Math.floor(Math.random() * 114) + 1;
+
+        // Fetch surah to get number of ayahs
         const surahRes = await fetch(`https://alquran-api.pages.dev/surah/${surahNumber}?lang=en`);
         const surahData = await surahRes.json();
-        const ayahCount = surahData.ayahs.length;
+        if (!surahData?.ayahs?.length) throw new Error("No ayahs found");
 
-        // Pick a random ayah
-        const ayahNumber = Math.floor(Math.random() * ayahCount) + 1;
+        const ayahs = surahData.ayahs;
+        const ayahNumber = Math.floor(Math.random() * ayahs.length) + 1;
 
         // Fetch that specific ayah
         const ayahRes = await fetch(`https://alquran-api.pages.dev/ayah/${surahNumber}:${ayahNumber}?lang=en`);
         const ayahData = await ayahRes.json();
 
+        // Set verse
         setVerse({
-          surah: ayahData.surah.number,
-          ayah: ayahData.numberInSurah,
-          arabic: ayahData.text,
-          translation: ayahData.translation,
-          audio: ayahData.audio?.url || "", // optional fallback
+          surah: ayahData?.surah?.number || surahNumber,
+          ayah: ayahData?.numberInSurah || ayahNumber,
+          arabic: ayahData?.text || "—",
+          translation: ayahData?.translation || "Translation not available",
+          audio: ayahData?.audio?.url || null,
         });
       } catch (err) {
         console.error("Failed to fetch verse:", err);
+        setVerse({
+          surah: 0,
+          ayah: 0,
+          arabic: "Error loading verse",
+          translation: "Please try again later.",
+          audio: null,
+        });
       } finally {
         setLoading(false);
       }
@@ -69,7 +79,6 @@ export default function App() {
   const textColor = isDark ? "text-gray-100" : "text-gray-900";
   const subTextColor = isDark ? "text-gray-300" : "text-gray-500";
 
-  // Loading spinner
   if (loading) return (
     <div className={`min-h-screen flex flex-col items-center justify-center bg-gradient-to-b ${bgGradient}`}>
       <div className="w-24 h-24 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
@@ -109,7 +118,6 @@ export default function App() {
         Reflect and find peace ✨
       </div>
 
-      {/* Animations */}
       <style jsx>{`
         @keyframes fadeInDown {
           0% { opacity: 0; transform: translateY(-30px); }
