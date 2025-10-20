@@ -15,36 +15,30 @@ export default function App() {
     return () => darkThemeMq.removeEventListener("change", listener);
   }, []);
 
-  // Fetch a single random verse safely
+  // Fetch a single random verse
   useEffect(() => {
     async function fetchRandomVerse() {
       try {
-        // pick random surah and ayah safely
-        let validVerse = false;
-        while (!validVerse) {
-          const surahNumber = Math.floor(Math.random() * 114) + 1; // 1-114
-          // Fetch surah
-          const res = await fetch(`https://alquran-api.pages.dev/surah/${surahNumber}?lang=en`);
-          const data = await res.json();
-          if (!data || !data.ayahs || data.ayahs.length === 0) continue;
+        const surahNumber = Math.floor(Math.random() * 114) + 1; // 1-114
+        // Fetch surah to know number of ayahs
+        const surahRes = await fetch(`https://alquran-api.pages.dev/surah/${surahNumber}?lang=en`);
+        const surahData = await surahRes.json();
+        const ayahCount = surahData.ayahs.length;
 
-          // Pick random ayah from surah
-          const ayah = data.ayahs[Math.floor(Math.random() * data.ayahs.length)];
+        // Pick a random ayah
+        const ayahNumber = Math.floor(Math.random() * ayahCount) + 1;
 
-          // Make sure audio exists
-          if (!ayah.audio || !ayah.audio.url) continue;
+        // Fetch that specific ayah
+        const ayahRes = await fetch(`https://alquran-api.pages.dev/ayah/${surahNumber}:${ayahNumber}?lang=en`);
+        const ayahData = await ayahRes.json();
 
-          const verseData = {
-            surah: data.number,
-            ayah: ayah.numberInSurah,
-            arabic: ayah.text,
-            translation: ayah.translation,
-            audio: ayah.audio.url,
-          };
-
-          setVerse(verseData);
-          validVerse = true;
-        }
+        setVerse({
+          surah: ayahData.surah.number,
+          ayah: ayahData.numberInSurah,
+          arabic: ayahData.text,
+          translation: ayahData.translation,
+          audio: ayahData.audio?.url || "", // optional fallback
+        });
       } catch (err) {
         console.error("Failed to fetch verse:", err);
       } finally {
@@ -57,7 +51,7 @@ export default function App() {
 
   // Handle audio
   useEffect(() => {
-    if (verse) {
+    if (verse?.audio) {
       if (audio) audio.pause();
       const newAudio = new Audio(verse.audio);
       setAudio(newAudio);
@@ -101,12 +95,14 @@ export default function App() {
         <p className={`text-lg italic mb-4 ${subTextColor}`}>{verse.translation}</p>
         <p className={`text-sm mb-6 ${subTextColor}`}>Surah {verse.surah}, Ayah {verse.ayah}</p>
 
-        <button
-          onClick={() => audio && audio.play()}
-          className={`px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl shadow-lg transition-all duration-300`}
-        >
-          ▶️ Play Recitation
-        </button>
+        {verse.audio && (
+          <button
+            onClick={() => audio && audio.play()}
+            className={`px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl shadow-lg transition-all duration-300`}
+          >
+            ▶️ Play Recitation
+          </button>
+        )}
       </div>
 
       <div className={`absolute bottom-6 text-sm opacity-70 animate-fadeInUp ${subTextColor}`}>
