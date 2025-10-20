@@ -94,7 +94,7 @@ export default function App() {
 
       {/* Glassmorphic card */}
       <div className={`relative max-w-2xl w-full ${cardBg} rounded-3xl p-12 flex flex-col items-center text-center shadow-2xl animate-floating`}>
-        <p className={`text-4xl md:text-5xl font-quran mb-6 leading-relaxed transition-transform duration-500 transform hover:scale-105 ${textColor}`}>
+        <p className={`text-3xl md:text-5xl font-quran mb-6 leading-relaxed transition-transform duration-500 transform hover:scale-105 ${textColor}`}>
           {verse.arabic}
         </p>
         <p className={`text-lg italic mb-4 ${subTextColor}`}>{verse.translation}</p>
