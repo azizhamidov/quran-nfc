@@ -5,8 +5,11 @@ export default function App() {
   const [audio, setAudio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(false);
+  const [sessionValid, setSessionValid] = useState(false);
 
-  // Detect system theme
+  const WORKER_BASE_URL = "https://your-worker.workers.dev"; // replace with your deployed Worker URL
+
+  // 1️⃣ Detect system theme
   useEffect(() => {
     const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
     setIsDark(darkThemeMq.matches);
@@ -15,11 +18,37 @@ export default function App() {
     return () => darkThemeMq.removeEventListener("change", listener);
   }, []);
 
-  // Fetch a random ayah
+  // 2️⃣ Validate session with Worker
   useEffect(() => {
+    const validateSession = async () => {
+      const session = new URLSearchParams(window.location.search).get("session");
+      if (!session) {
+        window.location.href = `${WORKER_BASE_URL}/verify`;
+        return;
+      }
+
+      try {
+        const res = await fetch(`${WORKER_BASE_URL}/check-session?session=${session}`);
+        if (!res.ok) {
+          window.location.href = `${WORKER_BASE_URL}/verify`;
+          return;
+        }
+        setSessionValid(true);
+      } catch (err) {
+        window.location.href = `${WORKER_BASE_URL}/verify`;
+      }
+    };
+
+    validateSession();
+  }, []);
+
+  // 3️⃣ Fetch a random ayah (only if session is valid)
+  useEffect(() => {
+    if (!sessionValid) return;
+
     const fetchVerse = async () => {
       try {
-        const surah = Math.floor(Math.random() * 114) + 1; // Surah 1-114
+        const surah = Math.floor(Math.random() * 114) + 1;
         const surahRes = await fetch(`https://api.alquran.cloud/v1/surah/${surah}`);
         const surahData = await surahRes.json();
         const ayahCount = surahData.data.numberOfAyahs;
@@ -50,9 +79,9 @@ export default function App() {
     };
 
     fetchVerse();
-  }, []);
+  }, [sessionValid]);
 
-  // Handle audio
+  // 4️⃣ Handle audio
   useEffect(() => {
     if (verse?.audio) {
       if (audio) audio.pause();
@@ -61,6 +90,7 @@ export default function App() {
     }
   }, [verse]);
 
+  // 5️⃣ Styling classes
   const bgGradient = isDark
     ? "from-gray-900 via-gray-800 to-gray-700"
     : "from-blue-100 via-purple-50 to-pink-50";
