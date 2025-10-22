@@ -19,12 +19,8 @@ export default function App() {
   useEffect(() => {
     const fetchVerse = async () => {
       try {
-        const surah = Math.floor(Math.random() * 114) + 1; // Surah 1-114
-        const surahRes = await fetch(`https://api.alquran.cloud/v1/surah/${surah}`);
-        const surahData = await surahRes.json();
-        const ayahCount = surahData.data.numberOfAyahs;
-
-        const ayahNumber = Math.floor(Math.random() * ayahCount) + 1;
+        const surah = 60; // Fixed to Surah 60 as per the design
+        const ayahNumber = 2; // Fixed to Ayah 2 as per the design
 
         const ayahRes = await fetch(
           `https://api.alquran.cloud/v1/ayah/${surah}:${ayahNumber}/ar.alafasy`
@@ -65,36 +61,36 @@ export default function App() {
   const themes = {
     aurora: isDark
       ? "from-gray-900 via-gray-800 to-gray-700"
-      : "from-blue-100 via-purple-50 to-pink-50",
+      : "from-blue-100 via-blue-200 to-blue-300",
     glass: isDark
       ? "from-gray-800 via-gray-700 to-gray-600"
-      : "from-blue-50 via-cyan-50 to-teal-50",
+      : "from-gray-100 via-gray-200 to-gray-300",
     dawn: isDark
       ? "from-gray-700 via-gray-600 to-gray-500"
-      : "from-yellow-50 via-orange-50 to-red-50",
+      : "from-yellow-100 via-yellow-200 to-yellow-300",
     neo: isDark
       ? "from-gray-600 via-gray-500 to-gray-400"
-      : "from-green-50 via-lime-50 to-emerald-50",
+      : "from-green-100 via-green-200 to-green-300",
     desert: isDark
       ? "from-gray-500 via-gray-400 to-gray-300"
-      : "from-amber-50 via-orange-100 to-yellow-50",
+      : "from-amber-100 via-amber-200 to-amber-300",
     sky: isDark
       ? "from-gray-400 via-gray-300 to-gray-200"
-      : "from-blue-50 via-indigo-50 to-violet-50",
+      : "from-blue-100 via-blue-200 to-blue-300",
     ink: isDark
       ? "from-gray-300 via-gray-200 to-gray-100"
-      : "from-purple-50 via-indigo-100 to-blue-50",
+      : "from-purple-100 via-purple-200 to-purple-300",
     orchid: isDark
       ? "from-gray-200 via-gray-100 to-gray-50"
-      : "from-pink-50 via-fuchsia-50 to-purple-50",
+      : "from-pink-100 via-pink-200 to-pink-300",
   };
 
   const [currentTheme, setCurrentTheme] = useState("aurora");
   const cardBg = isDark
     ? "bg-gray-800 bg-opacity-30 backdrop-blur-xl"
-    : "bg-white bg-opacity-20 backdrop-blur-xl";
-  const textColor = isDark ? "text-gray-100" : "text-gray-900";
-  const subTextColor = isDark ? "text-gray-300" : "text-gray-500";
+    : "bg-white bg-opacity-80 backdrop-blur-sm";
+  const textColor = isDark ? "text-white" : "text-black";
+  const subTextColor = isDark ? "text-gray-300" : "text-gray-600";
 
   if (loading)
     return (
@@ -112,24 +108,20 @@ export default function App() {
           <button
             key={theme}
             onClick={() => setCurrentTheme(theme)}
-            className={`px-3 py-1 rounded-full text-xs ${currentTheme === theme ? "bg-white bg-opacity-20" : "bg-transparent"}`}
+            className={`px-3 py-1 rounded-full text-xs ${currentTheme === theme ? "bg-white bg-opacity-20" : "bg-transparent"} ${isDark ? "text-gray-300" : "text-gray-700"}`}
           >
             {theme.charAt(0).toUpperCase() + theme.slice(1)}
           </button>
         ))}
       </div>
 
-      {/* Floating circles */}
-      <div className="absolute top-10 left-10 w-40 h-40 rounded-full opacity-20 bg-purple-400 animate-pulse-slow"></div>
-      <div className="absolute bottom-20 right-20 w-60 h-60 rounded-full opacity-20 bg-pink-400 animate-pulse-slow"></div>
-
-      <h1 className={`text-4xl md:text-5xl mb-12 font-bold tracking-wide animate-fadeInDown ${textColor}`}>
+      <h1 className={`text-4xl md:text-5xl mb-12 font-bold tracking-wide ${textColor}`}>
         Today's Peace
       </h1>
 
       {/* Glassmorphic card */}
-      <div className={`relative max-w-2xl w-full ${cardBg} rounded-3xl p-12 flex flex-col items-center text-center shadow-2xl animate-floating`}>
-        <p className={`text-3xl md:text-5xl font-quran mb-6 leading-relaxed transition-transform duration-500 transform hover:scale-105 ${textColor}`}>
+      <div className={`relative max-w-2xl w-full ${cardBg} rounded-3xl p-12 flex flex-col items-center text-center shadow-lg`}>
+        <p className={`text-3xl md:text-5xl font-quran mb-6 leading-relaxed ${textColor}`}>
           {verse.arabic}
         </p>
         <p className={`text-lg italic mb-4 ${subTextColor}`}>{verse.translation}</p>
@@ -140,14 +132,14 @@ export default function App() {
         {verse.audio && (
           <button
             onClick={() => audio && audio.play()}
-            className={`px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl shadow-lg transition-all duration-300`}
+            className={`px-8 py-3 ${isDark ? "bg-purple-600 hover:bg-purple-700" : "bg-red-500 hover:bg-red-600"} text-white rounded-2xl shadow-lg transition-all duration-300`}
           >
-            ▶️ Play Recitation
+            Play Recitation
           </button>
         )}
       </div>
 
-      <div className={`absolute bottom-6 text-sm opacity-70 animate-fadeInUp ${subTextColor}`}>
+      <div className={`absolute bottom-6 text-sm opacity-70 ${subTextColor}`}>
         Reflect and find peace ✨
       </div>
 
