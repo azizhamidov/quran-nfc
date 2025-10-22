@@ -1,9 +1,11 @@
 name = "qv-worker"
-main = "index.js"
-compatibility_date = "2025-10-22"
 account_id = "c220aadd2087e4940ba4d3a16a107c5b"
+workers_dev = true
+compatibility_date = "2025-10-22"
 
 kv_namespaces = [
   { binding = "TAGS_KV", id = "7a367b58fe214f9faa604e40974e83cb" },
   { binding = "SESSIONS_KV", id = "e0b4264b91fc44f087fcdb3177d1eca6" }
 ]
+
+main = "index.js"
