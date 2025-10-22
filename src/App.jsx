@@ -89,7 +89,6 @@ export default function App() {
       {/* ✨ Blurry Floating Circles ✨ */}
       <div className="absolute top-10 left-10 w-56 h-56 rounded-full bg-purple-400 opacity-30 blur-3xl animate-pulse-slow"></div>
       <div className="absolute bottom-20 right-20 w-72 h-72 rounded-full bg-pink-400 opacity-30 blur-3xl animate-pulse-slow"></div>
-      <div className="absolute top-1/2 left-1/3 w-80 h-80 rounded-full bg-blue-400 opacity-20 blur-3xl animate-pulse-slow"></div>
 
       <h1
         className={`text-4xl md:text-5xl mb-12 font-bold tracking-wide animate-fadeInDown ${textColor}`}
