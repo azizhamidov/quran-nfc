@@ -7,12 +7,12 @@ export default function App() {
   const [isDark, setIsDark] = useState(false);
   const [sessionValid, setSessionValid] = useState(false);
 
-  const WORKER_BASE_URL = "https://hamidovaziz657.workers.dev"; // replace with your deployed Worker URL
+  const WORKER_BASE_URL = "https://qv-worker.hamidovaziz657.workers.dev"; // replace with your deployed Worker URL
   useEffect(() => {
   const session = new URLSearchParams(window.location.search).get("session");
   if (!session) {
     // Redirect to Worker verify endpoint if no session
-    window.location.href = "https://hamidovaziz657.workers.dev/verify";
+    window.location.href = "https://qv-worker.hamidovaziz657.workers.dev/verify";
   }
 }, []);
 
