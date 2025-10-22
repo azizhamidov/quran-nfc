@@ -103,7 +103,7 @@ export default function App() {
   return (
     <div className={`relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b ${themes[currentTheme]}`}>
       {/* Theme Switcher */}
-      <div className="absolute top-4 left-4 flex space-x-2">
+      <div className="absolute top-4 right-4 flex space-x-2">
         {Object.keys(themes).map((theme) => (
           <button
             key={theme}
