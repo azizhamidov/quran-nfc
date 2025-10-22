@@ -8,6 +8,13 @@ export default function App() {
   const [sessionValid, setSessionValid] = useState(false);
 
   const WORKER_BASE_URL = "https://your-worker.workers.dev"; // replace with your deployed Worker URL
+  useEffect(() => {
+  const session = new URLSearchParams(window.location.search).get("session");
+  if (!session) {
+    // Redirect to Worker verify endpoint if no session
+    window.location.href = "https://your-worker.workers.dev/verify";
+  }
+}, []);
 
   // 1️⃣ Detect system theme
   useEffect(() => {
